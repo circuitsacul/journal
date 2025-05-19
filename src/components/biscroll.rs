@@ -10,6 +10,8 @@ use std::{
 use dioxus::prelude::*;
 use futures_timer::Delay;
 
+use crate::MOUSEDOWN;
+
 type FutureOut<T> = Pin<Box<dyn Future<Output = T> + 'static>>;
 type GetIDsAround<T> = fn(T) -> FutureOut<HashSet<T>>;
 type GetEntry<IdT, EntryT> = fn(IdT) -> FutureOut<EntryT>;
@@ -49,6 +51,10 @@ where
         loop {
             futures_timer::Delay::new(Duration::from_millis(100)).await;
 
+            if MOUSEDOWN() {
+                continue;
+            }
+
             let Some(scrollable_s) = scrollable() else {
                 continue;
             };
@@ -86,30 +92,9 @@ where
             let added_ids = entry_ids.difference(&current_ids);
             let removed = current_ids.difference(&entry_ids);
 
-            // for every removed entry, remove it from the list whilst tracking the effect it
-            // would have on the visual scroll position
+            // for every added ID, we need to fetch the new entry
             let mut scroll_by = 0.;
 
-            {
-                let mut entries_w = entries.write();
-                for id in removed {
-                    let entry = entries_w.remove(id);
-                    if id >= &focused {
-                        // removing items from the list only effects the scroll position
-                        // if they came before the focused entry
-                        continue;
-                    }
-                    if let Some(Entry {
-                        height: Some(height),
-                        ..
-                    }) = entry
-                    {
-                        scroll_by -= height;
-                    }
-                }
-            }
-
-            // for every added ID, we need to fetch the new entry
             let added = added_ids
                 .clone()
                 .map(|id| async move { (id, get_entry(*id).await) });
@@ -154,6 +139,26 @@ where
                 .write()
                 .values_mut()
                 .for_each(|val| val.hidden = false);
+
+            // ...remove removed entries...
+            {
+                let mut entries_w = entries.write();
+                for id in removed {
+                    let entry = entries_w.remove(id);
+                    if id >= &focused {
+                        // removing items from the list only effects the scroll position
+                        // if they came before the focused entry
+                        continue;
+                    }
+                    if let Some(Entry {
+                        height: Some(height),
+                        ..
+                    }) = entry
+                    {
+                        scroll_by -= height;
+                    }
+                }
+            }
 
             // ...and then immediatly scroll to maintain the visual position
             if scroll_by != 0. {

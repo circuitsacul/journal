@@ -19,6 +19,8 @@ fn main() {
     dioxus::launch(App);
 }
 
+static MOUSEDOWN: GlobalSignal<bool> = Signal::global(|| false);
+
 #[component]
 fn App() -> Element {
     rsx! {
@@ -28,6 +30,9 @@ fn App() -> Element {
         div {
             id: "app-main",
             class: "h-screen overflow-hidden",
+            onmousedown: move |_e| *MOUSEDOWN.write() = true,
+            onmouseup: move |_e| *MOUSEDOWN.write() = false,
+            onmouseleave: move |_e| *MOUSEDOWN.write() = false,
 
             Router::<Route> {}
         }
