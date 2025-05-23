@@ -1,12 +1,41 @@
 @import "tailwindcss";
 @import "@catppuccin/tailwindcss/config.css";
 
+@plugin "@tailwindcss/typography";
+
 body {
   margin: 0px;
   @apply flex flex-col bg-ctp-base text-ctp-text;
+}
+
+.markdown-preview-editor * {
+  display: inline !important;
+}
+
+.markdown-preview-editor code:after {
+  content: "" !important;
+}
+
+.markdown-preview-editor code:before {
+  content: "" !important;
 }
 
 *::selection {
   @apply bg-ctp-overlay2/30;
 }
 
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-inherit
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-ctp-surface0 rounded-lg
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-ctp-rosewater
+}

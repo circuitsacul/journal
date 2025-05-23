@@ -3,7 +3,7 @@ use std::collections::HashSet;
 use dioxus::prelude::*;
 use rand::Rng;
 
-use crate::components::BiScrollFeed;
+use crate::{Route, components::BiScrollFeed};
 
 #[derive(Clone, PartialEq)]
 struct EntryData {
@@ -13,8 +13,8 @@ struct EntryData {
 }
 
 async fn get_ids_around(id: u64) -> HashSet<u64> {
-    const START_BUFFER: u64 = 50;
-    const END_BUFFER: u64 = 50;
+    const START_BUFFER: u64 = 20;
+    const END_BUFFER: u64 = 20;
     const LAST_ENTRY: u64 = 100_000_000;
     let start = id.saturating_sub(START_BUFFER);
     let end = id.saturating_add(END_BUFFER).min(LAST_ENTRY);
@@ -50,9 +50,14 @@ fn render_entry(entry: EntryData) -> Element {
 #[component]
 pub fn Home() -> Element {
     rsx! {
+        div {
+            Link { to: Route::Home {}, "Home" }
+            Link { to: Route::Edit {}, "Edit" }
+        }
+
         BiScrollFeed {
             initial: 1_000,
-            update_dist: 5_000.0,
+            update_dist: 2_000.0,
             get_ids_around: move |id| Box::pin(get_ids_around(id)),
             get_entry: move |id| Box::pin(get_entry(id)),
             render_entry: render_entry,

@@ -174,11 +174,11 @@ where
 
     rsx! {
         div {
+            class: "flex-1 overflow-hidden",
             onmounted: move |data| outer.set(Some(data.data())),
-            class: "h-full",
 
             div {
-                class: "h-full overflow-y-scroll overscroll-none",
+                class: "h-full overflow-y-scroll styled-scroll overscroll-none",
                 onmounted: move |data| scrollable.set(Some(data.data())),
 
                 for (id, entry) in sorted_entry_ids()
