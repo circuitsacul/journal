@@ -8,7 +8,6 @@ fn js_get_text(id: &str) -> String {
 
 fn js_update_editor(id: &str, text: &str) -> String {
     let text = serde_json::to_string(text).unwrap();
-    dbg!(format!("{text}"));
     format!(r#"return window.updateEditor("{id}", {text})"#)
 }
 
@@ -35,7 +34,7 @@ pub fn Editor(id: String) -> Element {
             let text = text.as_str().unwrap_or_default().to_owned();
 
             let mdast = markdown::to_mdast(&text, &markdown::ParseOptions::gfm()).unwrap();
-            let html = mdast_to_html::process(&text, &mdast);
+            let html = mdast_to_html::render(&text, &mdast);
 
             let _ = document::eval(&js_update_editor(editor_id, &html)).await;
         }
@@ -66,7 +65,7 @@ pub fn Editor(id: String) -> Element {
     rsx! {
         div {
             id,
-            class: "overflow-y-scroll flex-1",
+            class: "overflow-y-scroll flex-1 p-2",
 
             article {
                 id: editor_id,

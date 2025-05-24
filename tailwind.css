@@ -12,6 +12,21 @@ body {
   display: inline !important;
 }
 
+.markdown-preview-editor blockquote {
+  display: inline-block !important;
+  margin: 0 !important;
+  font-style: revert;
+  font-weight: revert;
+}
+
+.markdown-preview-editor blockquote p:before {
+  content: "";
+}
+
+.markdown-preview-editor blockquote p:after {
+  content: "";
+}
+
 .markdown-preview-editor code:after {
   content: "" !important;
 }
