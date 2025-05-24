@@ -12,6 +12,14 @@ body {
   display: inline !important;
 }
 
+.markdown-preview-editor ul,
+.markdown-preview-editor ol
+{
+  /* display: inline-block !important; */
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
 .markdown-preview-editor blockquote {
   display: inline-block !important;
   margin: 0 !important;
